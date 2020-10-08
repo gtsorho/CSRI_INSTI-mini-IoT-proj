@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Login V1</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->	
+	<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+<!--===============================================================================================-->	
+	<link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+
+	<script defer src="vendor/fontawesome/js/all.js"></script>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+<!--===============================================================================================-->
+</head>
+<body>
+	
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100">
+				<div class="login100-pic js-tilt" data-tilt>
+					<div class="card text-white mb-3" style="max-width: 18rem; top: 25%;background-color: #731a1a!important;">
+						<div class="card-body" style="height: 7rem; margin: auto;">
+						  <h2 class="card-text" style="margin-top: 1.5rem;"></h2>
+						</div>
+					  </div>
+					  
+				</div>
+
+				<form class="login100-form validate-form">
+					<span class="login100-form-title">
+						manœuvrer
+					</span>
+
+					
+					<div class="container-login100-form-btn">
+						<button class="login100-form-btn mb-3" id="on_btn">
+							Turn on Lights
+						</button>
+					</div>
+					<small class="text-muted ml-3"><i class="fas fa-exclamation-circle text-warning mr-2"></i>Wait 30sec intervals between switches</small>
+					<div class="container-login100-form-btn">
+						<button class="login200-form-btn" id="off_btn">
+							Turn off Lights
+						</button>
+					</div>
+				</form>
+				<i class="fas fa-lightbulb fa-6x" id="lightOn" style="display: none; margin-top: 3.5rem"></i>
+				<i class="far fa-lightbulb fa-6x" id="lightOff" style="display: none; margin-top: 3.5rem;"></i>
+				
+			</div>
+		</div>
+	</div>
+	
+	
+
+	
+<!--===============================================================================================-->	
+	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/bootstrap/js/popper.js"></script>
+	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/select2/select2.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/tilt/tilt.jquery.min.js"></script>
+	<script >
+		$('.js-tilt').tilt({
+			scale: 1.1
+		})
+	</script>
+<!--===============================================================================================-->
+	<script src="js/main.js"></script>
+	<script>
+		$(document).ready(function(){
+				$.ajax({
+					url: "https://api.thingspeak.com/channels/1174840/feeds.json?results=1",
+					method: 'GET',
+					dataType: "json",
+					success: function(response) {
+						console.log(response);
+						var temp = response.feeds[0].field1
+						$('.card-text').html(parseFloat(temp).toFixed(1) + '&deg;C')
+
+						if(response.feeds[0].field3 == 0){
+							$('#lightOn').css('display','none')
+							$('#lightOff').css('display','block')
+						}else{
+							$('#lightOn').css('display','block ')
+							$('#lightOff').css('display','none ')
+						}
+					}
+				})
+			
+
+			$('#on_btn').on('click', function(e){
+				e.preventDefault()
+				$.ajax({
+					url: "https://api.thingspeak.com/update?api_key=XSUO5XS3J0PXFK9R&field2=1",
+					method: 'GET',
+					dataType: "json",
+					success: function(response) {
+						if(response > 0){
+							$('#lightOn').css('display','block ')
+							$('#lightOff').css('display','none ')
+						}						
+					}
+				})
+			})
+			$('#off_btn').on('click', function(e){
+				e.preventDefault()
+				$.ajax({
+					url: "https://api.thingspeak.com/update?api_key=XSUO5XS3J0PXFK9R&field2=0",
+					method: 'GET',
+					dataType: "json",
+					success: function(response) {
+						if(response > 0){
+							$('#lightOff').css('display','block ')
+							$('#lightOn').css('display','none')
+						}						
+					}
+				})
+			})
+		})
+	</script>
+
+</body>
+</html>
