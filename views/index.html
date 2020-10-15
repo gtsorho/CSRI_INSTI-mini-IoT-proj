@@ -17,6 +17,11 @@
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
 
+	<link rel="stylesheet" href="vendor\1.3.0\css\line-awesome.min.css">
+
+	<!-- <link rel="stylesheet" href="vendor\fontawesome-pro-5.14.0-web\js\all.js"> -->
+	
+
 	<script defer src="vendor/fontawesome/js/all.js"></script>
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="css/util.css">
@@ -27,17 +32,52 @@
 	
 	<div class="limiter">
 		<div class="container-login100">
-			<div class="wrap-login100">
-				<div class="login100-pic js-tilt" data-tilt>
+			<!-- sensor section  -->
+			<div class="wrap-login100 row">
+				<div class="container"><p class="text-center font-weight-bold">Field Parameters</p></div>
+				<div class="login100-pic js-tilt col-lg-4 col-sm-6 col-md-4" data-tilt>
+					<div class="card text-white mb-3" style="max-width: 18rem; top: 25%;background-color: #4f7d12!important;">
+						<div class="card-body" style="height: 7rem; margin: auto; padding: 0.25rem;">
+						  <h2 class="card-text temp" style="margin-top: 1.5rem;"></h2>
+						  <p class="card-text text-muted">Temperature</p>
+						</div>
+					  </div>
+					  
+				</div>
+				<div class="login100-pic js-tilt col-lg-4 col-sm-6 col-md-4" data-tilt>
 					<div class="card text-white mb-3" style="max-width: 18rem; top: 25%;background-color: #731a1a!important;">
+						<div class="card-body" style="height: 7rem; margin: auto; padding: 0.25rem;">
+						  <h2 class="card-text humidity" style="margin-top: 1.5rem;"></h2>
+						  <p class="card-text text-muted">Humidity</p>
+						</div>
+					  </div>
+					  
+				</div>
+				<div class="login100-pic js-tilt col-lg-4 col-sm-6 col-md-4 offset-sm-3 offset-md-3 offset-lg-3" data-tilt>
+					<div class="card text-white mb-3 " style="max-width: 18rem; top: 25%;background-color: #dfc21d!important;">
+						<div class="card-body" style="height: 7rem; margin: auto; padding: 0.25rem;">
+						  <h2 class="card-text moisture" style="margin-top: 1.5rem;"></h2>
+						  <p class="card-text text-muted">moisture</p>
+						</div>
+					  </div>
+					  
+				</div>							
+			</div>
+
+			<!-- control section  -->
+			<div class="wrap-login100 row" style="padding: inherit;">
+				<div class="login100-pic js-tilt col-md-3" data-tilt>
+					<div class="card text-white mb-3" style="max-width: 18rem; top: 25%;background-color: #1c1f24!important; height:9.2rem;">
 						<div class="card-body" style="height: 7rem; margin: auto;">
-						  <h2 class="card-text" style="margin-top: 1.5rem;"></h2>
+							<i class="las la-6x la-thermometer-full text-primary text-center" style="display:none;"></i>
+							<i class="las la-6x la-thermometer-empty text-primary text-center" style="display:none;"></i>
+							<p class="text-muted text-center card-text water"></p>
 						</div>
 					  </div>
 					  
 				</div>
 
-				<form class="login100-form validate-form">
+				<form class="login100-form validate-form col-md-6" style="left: 3rem;">
 					<span class="login100-form-title">
 						manœuvrer
 					</span>
@@ -45,21 +85,24 @@
 					
 					<div class="container-login100-form-btn">
 						<button class="login100-form-btn mb-3" id="on_btn">
-							Turn on Lights
+							Turn on Pump
 						</button>
 					</div>
 					<small class="text-muted ml-3"><i class="fas fa-exclamation-circle text-warning mr-2"></i>Wait 30sec intervals between switches</small>
+					<p><small class="text-muted ml-3"><i class="fas fa-exclamation-triangle text-warning mr-2"></i>Auto turn off after 15sec</small></p>
 					<div class="container-login100-form-btn">
 						<button class="login200-form-btn" id="off_btn">
-							Turn off Lights
+							Turn off Pump
 						</button>
 					</div>
 				</form>
-				<i class="fas fa-lightbulb fa-6x" id="lightOn" style="display: none; margin-top: 3.5rem"></i>
-				<i class="far fa-lightbulb fa-6x" id="lightOff" style="display: none; margin-top: 3.5rem;"></i>
-				
+				<div class="col-md-3" style=" left: 4rem;">
+					<i class="fas fa-tint fa-6x" id="lightOn" style="display: none; margin-top: 3.5rem"></i>
+					<i class="fas fa-tint-slash fa-6x" id="lightOff" style="display: none; margin-top: 3.5rem;"></i>
+				</div>				
 			</div>
 		</div>
+		
 	</div>
 	
 	
@@ -90,9 +133,23 @@
 					success: function(response) {
 						console.log(response);
 						var temp = response.feeds[0].field1
-						$('.card-text').html(parseFloat(temp).toFixed(1) + '&deg;C')
+						var moisture = response.feeds[0].field2
+						var water = response.feeds[0].field3
+						var humidity = response.feeds[0].field4
+						$('.temp').html(parseFloat(temp).toFixed(1) + '&deg;C')
+						$('.humidity').html(parseFloat(humidity).toFixed(1) + '%rh')
+						$('.moisture').html(parseFloat(moisture).toFixed(1)+ ' Si')
 
-						if(response.feeds[0].field3 == 0){
+						if(water < 400){
+							$('.la-thermometer-empty').show();
+							$('.water').text('Water : Empty')
+						}else{
+							$('.la-thermometer-full').show();
+							$('.water').text('Water : Full')
+						}
+						
+
+						if(response.feeds[0].field8 == 0){
 							$('#lightOn').css('display','none')
 							$('#lightOff').css('display','block')
 						}else{
@@ -106,7 +163,7 @@
 			$('#on_btn').on('click', function(e){
 				e.preventDefault()
 				$.ajax({
-					url: "https://api.thingspeak.com/update?api_key=XSUO5XS3J0PXFK9R&field2=1",
+					url: "https://api.thingspeak.com/update?api_key=XSUO5XS3J0PXFK9R&field7=1",
 					method: 'GET',
 					dataType: "json",
 					success: function(response) {
@@ -120,7 +177,7 @@
 			$('#off_btn').on('click', function(e){
 				e.preventDefault()
 				$.ajax({
-					url: "https://api.thingspeak.com/update?api_key=XSUO5XS3J0PXFK9R&field2=0",
+					url: "https://api.thingspeak.com/update?api_key=XSUO5XS3J0PXFK9R&field7=0",
 					method: 'GET',
 					dataType: "json",
 					success: function(response) {
