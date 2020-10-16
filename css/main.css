@@ -391,6 +391,7 @@ iframe {
 
 @media (max-width: 992px) {
   .wrap-login100 {
+    margin-bottom: 3rem;
     padding: 33px 90px 33px 85px;
   }
   #lightOn {
@@ -421,12 +422,18 @@ iframe {
 
   .login100-form {
     width: 100%;
+    left: 0rem !important;
+  }
+  .pump-icon {
+    left: -2rem !important;
   }
 }
 
 @media (max-width: 576px) {
   .wrap-login100 {
     padding: 33px 15px 33px 15px;
+    margin-bottom: 3rem;
+    width: 22rem;
   }
 }
 
